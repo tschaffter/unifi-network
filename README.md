@@ -1,19 +1,23 @@
-# Setup UniFi Network
+# Home Network
 
 ## Devices
 
 - [UniFi Security Gateway (USG)](https://www.ui.com/unifi-routing/usg/)
 - [UniFi Switch US-8-60W](https://www.ui.com/unifi-switching/unifi-switch-8/)
 - [UniFi AP AC Pro](https://www.ui.com/unifi/unifi-ap-ac-pro/)
-- UniFi Controller installed on Raspberry Pi 4
+- [UniFi Controller running on Raspberry Pi 4](https://github.com/tschaffter/unifi-controller)
 - CenturyLink Fiber Gigabit Optical Network Terminal (ONT)
 - Computer used to setup the network
 
-## Setup UniFi Controller on Raspberry Pi 4
-
 ## Connect the devices
 
-Connect the devices according to Figure XXX. The status LED of all the UniFi
+Connect the devices according to image below.
+
+![](images/unifi-topology.png)
+
+
+
+The status LED of all the UniFi
 devices should turn solid white, which means that the devices are ready for
 adoption.
 
