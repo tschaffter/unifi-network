@@ -6,7 +6,7 @@
 - [UniFi Switch US-8-60W](https://www.ui.com/unifi-switching/unifi-switch-8/)
 - [UniFi AP AC Pro](https://www.ui.com/unifi/unifi-ap-ac-pro/)
 - [UniFi Controller running on Raspberry Pi 4](https://github.com/tschaffter/unifi-controller)
-- CenturyLink Fiber Gigabit Optical Network Terminal (ONT)
+- Modem / ISP Router / Optical Network Terminal (ONT)
 - Computer used to setup the network
 
 ## Network topology
