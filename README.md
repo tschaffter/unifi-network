@@ -9,22 +9,24 @@
 - CenturyLink Fiber Gigabit Optical Network Terminal (ONT)
 - Computer used to setup the network
 
-## Connect the devices
+## Network topology
 
 Connect the devices according to image below.
 
-![](images/unifi-topology.png)
+![Unifi topology](images/unifi-topology.png)
 
+Here the Cloud Key (UCK-G2) represents the UniFi Controller that we run on a
+Raspberry Pi.
 
-
-The status LED of all the UniFi
-devices should turn solid white, which means that the devices are ready for
-adoption.
+Upon powering up any UniFi device, its status LED will start blink white. Wait
+for the status LED of all UniFi devices to become solid white before moving to
+the next step.
 
 ## Initial configuration of the USG
 
-At this point, the computer used to configure the network may not have access
-to internet, at least if CenturyLink is the internet provider.
+At this point, the computer used to configure the network may not internet
+access, especially if the connection if provided by an internet service provider
+(ISP) that uses PPPoE (Point-to-Point Protocol over Ethernet).
 
 1. Go to the USG web interface: https://192.168.1.1
 2. By pass the browser warning about `Potential Security Risk Ahead` (FireFox)
@@ -36,57 +38,52 @@ to internet, at least if CenturyLink is the internet provider.
     - Preferred DNS: `8.8.8.8` (Google Public DNS)
     - Alternate DNS: `8.8.4.4` (Google Public DNS)
     - Use VLAN ID: `<VLAN ID from CenturyLink>`
-4. Change the subnet (optional). It is recommended to change the subnet instead
-   of using the default one for increased security. Under `LAN Settings`:
-   - IP Address: `192.168.<subnet ID>.1`
-   - DHCP Range: `192.168.<subnet ID>.6` to `192.168.<subnet ID>.254`
-5. Click on `Apply Changes`
+4. Click on `Apply Changes`
 
-Upon changing the subnet, this message should appear:
+The following message should appear:
 
-> The LAN IP has been changed. You may need to reopen this application at the
-new IP. You may also need to release/renew DHCP on your client machine.
+> Congratulations! The Gateway is connected to the internet.
 
-After 1-2 minutes, navigate to the address `192.168.<subnet ID>.1` and you
-should be back to the USG web interface. From now on, the instructions will
-be given for the default subnet `192.168.1.1` to be more concise. If the subnet
-has been changed, update the instructions accordingly.
+To confirm that the USG has now access to internet, ssh to the the USG
+(`ssh ubnt@192.168.1.1`, password: `ubnt`) and run the command `ping 1.1.1.1`.
 
-The USG web interface should list the following devices and provide their IP
+### Change the subnet later
+
+A good practice in terms of security is to never use default value for username,
+password and IP addresses. Thus, it is recommended to change the primary subnet
+of the network so that the IP address of the USG becomes `192.168.<subnet ID>.1`
+where `<subnet ID>` can take any value you want between 1 and 255.
+
+Though the USG interface allows to change the subnet, it is recommended to do so
+using the UniFi controller AFTER adopting all the devices.
+
+## Check that all the devices are detected by the USG
+
+The USG interface should list the following devices as well as their IP
 addresses.
 
 - USG
 - UniFi controller
 - UniFi AP
-- Computer
+- Computer used to setup the network
 
-The message `Congratulations! The Gateway is connected to the internet.` should
-now be visible at the top of the page. The USG should now have access to
-internet. To check that it is the case, ssh to the the USG (`ssh ubnt@192.168.1.1`,
-password: `ubnt`) and run the command `ping 1.1.1.1`.
+## First login into the UniFi controller
 
-At this point of the setup, the computer and UniFi controller never had access
-to internet, even after trying to reconnect them and renewing the DHCP lease.
-The solution suggested on the UniFi forum is to move on to configuring the UniFi
-controller and set PPPoE using the controller dashboard.
+Before navigating to the web interface of the controller, set the field `Inform URL`
+in the USG dashboard to the value `http://<controller_ip>:8080/inform`
+and click on `Apply Changes`. Leave the dialog titled `Waiting for adoption`
+open. Then, open a new tab in your browser and:
 
-## Initial configuration of the UniFi controller
-
-Before moving on to the web interface of the controller, set the field `Inform URL`
-in the USG dashboard to the value `http://<controller ip address>:8080/inform`
-and click on `Save Changes`. Leave the dialog titled `Waiting for adoption`
-open. Open a new tab in the browser and navigate to the address of the controller
-web interface.
-
-1. Go to the web interface of the controller: `https://<ip address>:8443`
+1. Go to the web interface of the controller: `https://<controller_ip>:8443`
 2. On the setup page 1:
     - Controller Name: `unifi-controller`
     - Check the checkbox and click on `Next`
 3. On the setup page 2: We are given the choice to login with an Ubiquiti account
-or with a local account. The later is considered more secure. Also the controller
-may not have access to internet at this point of the setup (see above) so creating
-a local account would be the only solution. If internet is available, the Ubiquiti
-option can be selected if you intend to access your controller remotely.
+   or with a local account. The later is considered more secure. Also the controller
+   may not have access to the internet at this point of the setup, in which case
+   creating a local account is the option valid option. If internet access is
+   available, the Ubiquiti option can be selected if the controller needs to be
+   accessible remotely (i.e. from outside this private network).
     - Click on `Switch to Advanced Setup`
     - Disable `Enable Remote Access` and `Use your Ubiquiti account for local access`.
     - Fill in the form to create a local account
@@ -110,86 +107,80 @@ option can be selected if you intend to access your controller remotely.
 After a brief loading screen, you should now be presented with the controller
 dashboard.
 
-## Adopt devices
+## Adopt UniFi devices
 
-Navigate to the page `Devices`. This page should list the three UniFi devices
-with the status `Pending Adoption`. We will first adopt the USG, then the Switch
-and finally the AP.
+Navigate to the page `Devices` of the controller dashboard. This page should
+list the three UniFi devices with the status `Pending Adoption`.
 
 ### Adopt the USG
 
-1. Click on the USG item to open a side menu on the right of the page.
-2. Click on `Adopt`
+1. Click on the USG item to open a menu on the right side of the page.
+2. Click on `Adopt`.
 3. Go back to the USG web interface and close the open dialog by clicking on
    the button `Confirm`.
-4. In the controller dashboard, the status of the USG should now be set to
-   `Provisioning`. After a couple of minutes, the USG should be adopted its
-   status set to `Connected`.
+4. In the controller dashboard, the status of the USG should now be `Provisioning`
+   and the status LED of the USG should have became solid blue. After a couple
+   of minutes, the USG status should become `Connected`.
 
-The principal LED of the USG should have turned blue upon successful adoption.
+### Get internet access
 
-### Get access to internet
+All the devices can get internet access now that the controller has adopted
+the USG.
 
-All the devices can get access to internet now that the controller has adopted
-the USB.
+1. Computer: Simply turn disable/enable the Ethernet connection
+2. AP: Power off/on
+3. Controller: Ssh to it then `sudo reboot`
 
-- Computer: Simply turn disable/enable the Ethernet connection
-- AP: Power off/on
-- Controller: Ssh to it then `sudo reboot`
+### Difficulty adopting devices
 
-IMPORTANT: Never power off/on the controller by removing the power cable,
-otherwise the controller configuration may get corrupted! This is why a systemd
-service has been created on the Raspberry Pi to automatically and gracefully
-stop the Docker container `unifi-controller` when shutting down the Pi.
+One reason may be that the `Inform URL` of the device is ill defined. Ssh into
+the device to check and set the `Inform URL` if needed.
 
-### Silence "Controller software update x.y.z is now available."
+1. `ssh ubnt@<device_ip>` (default password valid before adoption: `ubnt`)
+2. Check the value of the `Inform URL` with the command `info`
+3. Set `Inform URL`:
 
-Now that the controller has access to internet, its dashboard may show a message
-like `Controller software update x.y.z is now available.`. From the message options,
-it's preferrable to silence this type of message. Instead, you should update the
-Docker image used to run the controller on the Raspberry Pi regularly.
+        set-inform http://<controller_ip>:8080/inform
 
-### Adopt the Switch
+### Logging into devices after their adoption
 
-Click on the Switch item, then click on `Adopt`. The status should change to
-`Adopting`, then
+The SSH credentials of the UniFi devices are redefined during their adoption.
+The new credentials can be found from the controller interface under
+ `Settings` > `Network Settings` > `Device Authentication`.
 
-`Disconnected`
+### Manual firmware update
 
+The controller starts proposing update for the firmware of the UniFi devices
+after their adoption. A manual update of the firmware is still possible. Simply
+ssh into the device and run the command below (see [UniFi Downloads page](https://www.ui.com/download/unifi/).).
 
-Status:      Unknown[11] (http://172.17.0.2:8080/inform)
+    upgrade https://dl.ui.com/unifi/firmware/<device>/<version>.tar`
 
+### Adopting the UniFi switch and AP
 
+Initiate the adoption procedure from the controller. Ssh into the device to [set
+the Inform URL](#difficulty-adopting-devices).
 
-UBNT-US.v4.3.20# set-inform http://192.168.XXX.9:8080/inform
+## Change the primary subnet
 
-Adoption request sent to 'http://192.168.1.9:8080/inform'.  Use the controller to complete the adopt process.
+It is recommended to use a subnet different from the default one (192.168.1.x)
+for enhanced security. From the controller interface, go to `Settings` >
+`Networks` > `Edit` the network named `LAN`:
 
+- Gateway/Subnet: `192.168.<subnet>.1/28`
+- Click on the button `Update DHCP Range`
+- Click on `Save`
 
+Wait a couple of minutes and then tries to logging back into the controller
+interface now available at the address `192.168.<subnet>.1`. Disconnect and
+reconnect all the devices on the network, including the computer used to
+configure it, to ensure that they obtain an IP from the new subnet. Go to the
+`Devices` page of controller and check that all UniFi devices are correctly
+detected. If the controller tries to re-adopt a device or if the status of the
+device is not `Connected`, [ssh into the device](#logging-into-devices-after-their-adoption)
+and make sure that the [Inform URL is set to the new IP of the controller](#difficulty-adopting-devices).
 
+## Contributing change
 
-USGL Forget > device busy > power off > wait 1-2 min > forget > success > power on USG > controller says that USG is `Managed by Other`
-
-
-
-## Manual update of the USG firmware
-
-Ssh to the USG and run `upgrade https://dl.ui.com/unifi/firmware/UGW3/<version>.tar`.
-The value of `<version>` can be found on XXX.
-
-## FAQ
-
-### The browser shows `Warning: Potential Security Risk Ahead`
-
-In Firefox, click on the button `Advanced...`, then click on `Accept the Risk and Continue`.
-
-
-set-inform http://192.168.XXX.10:8080/inform
-
-Adopting from controller first, then setting inform on the device.
-
-Reset USG, Reset Switch, restart USG
-
-The LAN IP has been changed. You may need to reopen this application at the new IP. You may also need to release/renew DHCP on your client machine.
-
-Set 27 on USB, save and all devices will get a new IP (but PC that needs renew lease?)
+Please read the [`CONTRIBUTING.md`](CONTRIBUTING.md) for details on how to
+contribute to this project.
