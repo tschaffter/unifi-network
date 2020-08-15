@@ -154,7 +154,7 @@ The controller starts proposing update for the firmware of the UniFi devices
 after their adoption. A manual update of the firmware is still possible. Simply
 ssh into the device and run the command below (see [UniFi Downloads page](https://www.ui.com/download/unifi/).).
 
-    upgrade https://dl.ui.com/unifi/firmware/<device>/<version>.tar`
+    upgrade https://dl.ui.com/unifi/firmware/<device>/<version>.tar
 
 ### Adopting the UniFi switch and AP
 
