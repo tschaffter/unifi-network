@@ -33,8 +33,8 @@ access, especially if the connection if provided by an internet service provider
    by clicking on `Advanced...` and `Accept the Risk and Continue`
 3. Configure PPPoe under `Settings` > `Configuration`
     - Connection Type: `PPPoE`
-    - Username: `<username from CenturyLink>`
-    - Password: `<password from CenturyLink>`
+    - Username: `<username from ISP>`
+    - Password: `<password from ISP>`
     - Preferred DNS: `8.8.8.8` (Google Public DNS)
     - Alternate DNS: `8.8.4.4` (Google Public DNS)
     - Use VLAN ID: `<VLAN ID from CenturyLink>`
