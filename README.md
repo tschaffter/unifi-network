@@ -37,7 +37,7 @@ access, especially if the connection if provided by an internet service provider
     - Password: `<password from ISP>`
     - Preferred DNS: `8.8.8.8` (Google Public DNS)
     - Alternate DNS: `8.8.4.4` (Google Public DNS)
-    - Use VLAN ID: `<VLAN ID from CenturyLink>`
+    - Use VLAN ID: `<VLAN ID from ISP>`
 4. Click on `Apply Changes`
 
 The following message should appear:
